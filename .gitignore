@@ -1,0 +1,38 @@
+# macOS
+.DS_Store
+._*
+.Spotlight-V100/
+.Trashes/
+
+# Xcode: configurações pessoais e estado da interface
+xcuserdata/
+*.xcuserstate
+UserInterfaceState*
+*.xccheckout
+*.xcscmblueprint
+
+# Builds e resultados locais
+build/
+DerivedData/
+*.xcarchive
+*.xcresult
+*.ipa
+*.dSYM
+*.dSYM.zip
+
+# Swift Package Manager: artefatos gerados
+.build/
+.swiftpm/
+
+# Configuração local
+.env
+.env.*
+!.env.example
+!.env.sample
+
+# Logs e arquivos temporários
+*.log
+*.tmp
+*.swp
+*.swo
+*~

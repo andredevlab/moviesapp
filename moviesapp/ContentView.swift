@@ -1,17 +1,10 @@
 import SwiftUI
-import Playgrounds
 
 struct ContentView: View {
+    let model: MoviesListViewModel
+    let diagnostics: RequestDiagnostics
+
     var body: some View {
-        Text("Hello, world!")
-            .padding()
+        MoviesView(model: model, diagnostics: diagnostics)
     }
-}
-
-#Preview {
-    ContentView()
-}
-
-#Playground {
-    _ = 1 + 2
 }
