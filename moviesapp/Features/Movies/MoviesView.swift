@@ -2,7 +2,6 @@ import SwiftUI
 
 struct MoviesView: View {
     @Bindable var model: MoviesListViewModel
-    let diagnostics: RequestDiagnostics
     @State private var showingFilters = false
     @State private var showingDiagnostics = false
 
@@ -93,7 +92,7 @@ struct MoviesView: View {
             MovieFiltersView(filters: model.filters) { model.filters = $0 }
         }
         .sheet(isPresented: $showingDiagnostics) {
-            RequestDiagnosticsView(diagnostics: diagnostics)
+            RequestDiagnosticsView(entries: [])
         }
     }
 }

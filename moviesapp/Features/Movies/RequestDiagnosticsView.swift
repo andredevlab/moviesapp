@@ -1,16 +1,26 @@
 import SwiftUI
 
 struct RequestDiagnosticsView: View {
-    let diagnostics: RequestDiagnostics
+    struct Entry: Identifiable {
+        let id = UUID()
+        let date: Date
+        let pathAndQuery: String
+        let statusCode: Int?
+        let headers: [String: String]
+        let networkBytes: Int
+        let failure: String?
+    }
+
+    let entries: [Entry]
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
         NavigationStack {
             List {
-                if diagnostics.entries.isEmpty {
+                if entries.isEmpty {
                     ContentUnavailableView("Nenhuma requisição", systemImage: "network")
                 }
-                ForEach(diagnostics.entries) { entry in
+                ForEach(entries) { entry in
                     Section {
                         Text(entry.pathAndQuery).font(.caption.monospaced())
                         Text(entry.date, format: .dateTime.hour().minute().second())

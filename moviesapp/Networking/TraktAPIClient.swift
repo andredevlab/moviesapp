@@ -5,17 +5,14 @@ final class TraktAPIClient: APIClient {
     private let baseURL: URL
     private let clientID: String
     private let transport: any HTTPTransport
-    private let diagnostics: RequestDiagnostics
 
     init(
         clientID: String,
         transport: any HTTPTransport,
-        diagnostics: RequestDiagnostics,
         baseURL: URL = URL(string: "https://api.trakt.tv")!
     ) {
         self.clientID = clientID
         self.transport = transport
-        self.diagnostics = diagnostics
         self.baseURL = baseURL
     }
 
@@ -25,17 +22,8 @@ final class TraktAPIClient: APIClient {
         }
         let urlRequest = try makeURLRequest(request)
 
-        let data: Data
-        let response: HTTPURLResponse
-        do {
-            (data, response) = try await transport.data(for: urlRequest)
-        } catch {
-            diagnostics.record(request: urlRequest, response: nil, byteCount: 0, failure: error.localizedDescription)
-            throw error
-        }
-
+        let (data, response) = try await transport.data(for: urlRequest)
         let headers = response.normalizedHeaders
-        diagnostics.record(request: urlRequest, response: response, byteCount: data.count)
         guard (200..<300).contains(response.statusCode) else {
             throw NetworkError.http(status: response.statusCode, headers: headers)
         }
