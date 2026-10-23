@@ -1,5 +1,7 @@
 import Foundation
 import Observation
+import Core
+import DiscoverFeature
 
 @MainActor
 protocol SearchDebouncing {
@@ -38,7 +40,8 @@ final class MoviesListViewModel {
     }
     private(set) var state: State
 
-    @ObservationIgnored private let service: any MoviesServicing
+    @ObservationIgnored private let listPopularMoviesUseCase: any ListPopularMoviesUseCase
+    @ObservationIgnored private let searchMoviesUseCase: any SearchMoviesUseCase
     @ObservationIgnored private let debouncer: any SearchDebouncing
     @ObservationIgnored private var activeQuery: MovieQuery
     @ObservationIgnored private var generation = UUID()
@@ -48,14 +51,14 @@ final class MoviesListViewModel {
 
     var isSearching: Bool { !searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
 
-    init(
-        service: any MoviesServicing,
+    init(listPopularMoviesUseCase: any ListPopularMoviesUseCase,
+        searchMoviesUseCase: any SearchMoviesUseCase,
         debouncer: (any SearchDebouncing)? = nil,
         searchText: String = "",
         filters: MovieFilters? = nil,
-        initialState: State? = nil
-    ) {
-        self.service = service
+        initialState: State? = nil) {
+        self.listPopularMoviesUseCase = listPopularMoviesUseCase
+        self.searchMoviesUseCase = searchMoviesUseCase
         self.debouncer = debouncer ?? SearchDebouncer()
         self.searchText = searchText
         let resolvedFilters = filters ?? MovieFilters()
@@ -132,15 +135,31 @@ final class MoviesListViewModel {
         state.phase = phase
         state.errorMessage = nil
         do {
-            let result = try await service.fetchMovies(query: query, page: page, limit: Self.pageLimit)
+            let movies: [Movie]
+            let loadedPage: Int
+            let hasMore: Bool
+            if query.term.isEmpty {
+                let result = try await listPopularMoviesUseCase.execute(
+                    filters: query.filters,
+                    page: PageRequest(page: page, limit: Self.pageLimit)
+                )
+                movies = result.items
+                loadedPage = result.pagination.page
+                hasMore = result.pagination.hasNextPage
+            } else {
+                let result = try await searchMoviesUseCase.execute(term: query.term, limit: Self.pageLimit)
+                movies = result.movies
+                loadedPage = 1
+                hasMore = false
+            }
             try Task.checkCancellation()
             guard generation == requestGeneration else { return }
 
             var ids = Set(page == 1 ? [] : state.movies.map(\.id))
-            let uniqueMovies = result.movies.filter { ids.insert($0.id).inserted }
+            let uniqueMovies = movies.filter { ids.insert($0.id).inserted }
             state.movies = page == 1 ? uniqueMovies : state.movies + uniqueMovies
-            state.page = result.pagination.page
-            state.hasMore = query.term.isEmpty && result.pagination.hasNextPage
+            state.page = loadedPage
+            state.hasMore = hasMore
             state.hasLoaded = true
             state.failedPage = nil
             state.failedPhase = nil

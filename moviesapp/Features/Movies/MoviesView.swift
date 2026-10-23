@@ -1,4 +1,5 @@
 import SwiftUI
+import Core
 
 struct MoviesView: View {
     @Bindable var model: MoviesListViewModel

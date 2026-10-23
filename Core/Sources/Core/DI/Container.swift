@@ -2,17 +2,17 @@ import FactoryKit
 import Networking
 
 extension Container {
-    var moviesRemoteDataSource: ParameterFactory<String, any MoviesRemoteDataSource> {
-        self { clientID in
-            ConcreteMoviesRemoteDataSource(client: self.moviesHTTPClient(), clientID: clientID)
+    var moviesRemoteDataSource: Factory<any MoviesRemoteDataSource> {
+        self {
+            ConcreteMoviesRemoteDataSource(client: Container.shared.moviesHTTPClient.callAsFunction())
         }
     }
 }
 
 public extension Container {
-    var moviesRepository: ParameterFactory<String, any MoviesRepository> {
-        self { clientID in
-            ConcreteMoviesRepository(remoteDataSource: self.moviesRemoteDataSource(clientID))
+    var moviesRepository: Factory<MoviesRepository> {
+        self {
+            ConcreteMoviesRepository(remoteDataSource: Container.shared.moviesRemoteDataSource.callAsFunction())
         }
     }
 }

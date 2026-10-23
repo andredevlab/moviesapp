@@ -1,4 +1,5 @@
 import SwiftUI
+import Core
 
 struct MovieFiltersView: View {
     @Environment(\.dismiss) private var dismiss
@@ -27,7 +28,7 @@ struct MovieFiltersView: View {
                 Section("Gênero") {
                     Picker("Gênero", selection: $genre) {
                         Text("Todos").tag(Optional<MovieGenre>.none)
-                        ForEach(MovieGenre.allCases) { genre in
+                        ForEach(MovieGenre.allCases, id: \.self) { genre in
                             Text(genre.title).tag(Optional(genre))
                         }
                     }
