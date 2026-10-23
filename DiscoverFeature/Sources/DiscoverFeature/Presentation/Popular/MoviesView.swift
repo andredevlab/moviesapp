@@ -1,10 +1,25 @@
 import SwiftUI
 import Core
 
-struct MoviesView: View {
-    @Bindable var model: MoviesListViewModel
+@MainActor
+public struct MoviesView: View {
+    @State private var model = ConcreteMoviesListViewModel()
+    private let onOpenDiagnostics: @MainActor () -> Void
+
+    public init(onOpenDiagnostics: @escaping @MainActor () -> Void) {
+        self.onOpenDiagnostics = onOpenDiagnostics
+    }
+
+    public var body: some View {
+        MoviesContentView(model: model, onOpenDiagnostics: onOpenDiagnostics)
+    }
+}
+
+@MainActor
+private struct MoviesContentView<ViewModel: MoviesListViewModel>: View {
+    @Bindable var model: ViewModel
     @State private var showingFilters = false
-    @State private var showingDiagnostics = false
+    let onOpenDiagnostics: @MainActor () -> Void
 
     var body: some View {
         NavigationStack {
@@ -17,7 +32,7 @@ struct MoviesView: View {
                 }
                 ForEach(model.state.movies) { movie in
                     MovieRow(movie: movie)
-                        .task { await model.loadMoreIfNeeded(currentMovieID: movie.id) }
+                        .task { await model.paginate(currentMovieID: movie.id) }
                 }
 
                 if model.state.phase == .loadingFirstPage || model.state.phase == .paginating || model.state.phase == .debouncing {
@@ -48,7 +63,7 @@ struct MoviesView: View {
                         Button("Carregar mais") {
                             Task {
                                 if let id = model.state.movies.last?.id {
-                                    await model.loadMoreIfNeeded(currentMovieID: id)
+                                    await model.paginate(currentMovieID: id)
                                 }
                             }
                         }
@@ -71,7 +86,13 @@ struct MoviesView: View {
             .listStyle(.plain)
             .navigationTitle("Popular Movies")
             .refreshable { await model.refresh() }
-            .task { await model.loadInitialIfNeeded() }
+            .task(id: MovieQuery(term: model.searchText, filters: model.filters)) {
+                if model.isSearching {
+                    await model.search(term: model.searchText)
+                } else {
+                    await model.load()
+                }
+            }
             .toolbar {
                 ToolbarItemGroup(placement: .primaryAction) {
                     Button {
@@ -81,7 +102,7 @@ struct MoviesView: View {
                     }
                     .disabled(model.isSearching)
                     Button {
-                        showingDiagnostics = true
+                        onOpenDiagnostics()
                     } label: {
                         Label("Requisições", systemImage: "network")
                     }
@@ -91,9 +112,6 @@ struct MoviesView: View {
         .searchable(text: $model.searchText, prompt: "Buscar filmes")
         .sheet(isPresented: $showingFilters) {
             MovieFiltersView(filters: model.filters) { model.filters = $0 }
-        }
-        .sheet(isPresented: $showingDiagnostics) {
-            RequestDiagnosticsView(entries: [])
         }
     }
 }

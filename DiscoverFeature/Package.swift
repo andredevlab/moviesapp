@@ -6,7 +6,7 @@ let package = Package(
     name: "DiscoverFeature",
     platforms: [
         .iOS("26.6"),
-        .macOS(.v13)
+        .macOS(.v14)
     ],
     products: [
         .library(name: "DiscoverFeature", targets: ["DiscoverFeature"])
