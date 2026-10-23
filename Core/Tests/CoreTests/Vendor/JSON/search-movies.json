@@ -1,0 +1,13 @@
+[
+    {
+        "movie": {
+            "ids": {
+                "trakt": 1111
+            },
+            "title": "foo.title",
+            "genres": [
+                "foo.genre"
+            ]
+        }
+    }
+]

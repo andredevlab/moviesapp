@@ -19,6 +19,7 @@
 /* Begin PBXFileReference section */
 		000000000000000000000120 /* moviesapp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = moviesapp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		000000000000000000000130 /* moviesappTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = moviesappTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		1614AC3B308AC87D0001F8FC /* Core */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Core; sourceTree = "<group>"; };
 		16C78B3A308A95270070F144 /* Networking */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Networking; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -52,6 +53,7 @@
 		000000000000000000000001 = {
 			isa = PBXGroup;
 			children = (
+				1614AC3B308AC87D0001F8FC /* Core */,
 				16C78B3A308A95270070F144 /* Networking */,
 				000000000000000000000010 /* moviesapp */,
 				000000000000000000000030 /* moviesappTests */,

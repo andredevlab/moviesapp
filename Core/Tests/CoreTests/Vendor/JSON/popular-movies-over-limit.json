@@ -1,0 +1,14 @@
+[
+    {
+        "ids": {
+            "trakt": 1111
+        },
+        "title": "foo.first"
+    },
+    {
+        "ids": {
+            "trakt": 2222
+        },
+        "title": "foo.second"
+    }
+]

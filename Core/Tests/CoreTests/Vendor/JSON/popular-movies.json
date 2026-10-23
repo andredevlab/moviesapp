@@ -1,0 +1,14 @@
+[
+    {
+        "ids": {
+            "trakt": 1111
+        },
+        "title": "foo.title",
+        "year": 2222,
+        "overview": "foo.overview",
+        "runtime": 3333,
+        "genres": [
+            "foo.genre"
+        ]
+    }
+]
