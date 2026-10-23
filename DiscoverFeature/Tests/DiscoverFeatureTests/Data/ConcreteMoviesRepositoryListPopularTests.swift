@@ -1,5 +1,6 @@
 import Testing
-@testable import Core
+import Core
+@testable import DiscoverFeature
 
 struct ConcreteMoviesRepositoryListPopularTests {
     @Test

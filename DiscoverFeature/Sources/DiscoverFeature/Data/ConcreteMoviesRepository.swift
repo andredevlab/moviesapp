@@ -1,3 +1,4 @@
+import Core
 
 public actor ConcreteMoviesRepository: MoviesRepository {
     private let remoteDataSource: any MoviesRemoteDataSource

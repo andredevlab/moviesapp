@@ -1,3 +1,4 @@
+import Core
 import Foundation
 
 public protocol MoviesRepository: Sendable {

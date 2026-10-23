@@ -1,4 +1,5 @@
 import Core
+import DiscoverFeature
 
 actor MockMoviesRepository: MoviesRepository {
     enum Invocation: Equatable, Sendable {

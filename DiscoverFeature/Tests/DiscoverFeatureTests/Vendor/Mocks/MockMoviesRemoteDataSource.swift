@@ -1,4 +1,5 @@
-@testable import Core
+import Core
+@testable import DiscoverFeature
 
 actor MockMoviesRemoteDataSource: MoviesRemoteDataSource {
     enum Invocation: Equatable, Sendable {

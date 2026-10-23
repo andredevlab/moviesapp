@@ -1,3 +1,4 @@
+import Core
 import Foundation
 
 enum MoviesRemoteDataSourceError: Error, Sendable, LocalizedError {

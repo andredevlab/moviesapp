@@ -1,3 +1,4 @@
+import Core
 
 protocol MoviesRemoteDataSource: Sendable {
     func listPopular(filters: MovieFilters, page: PageRequest) async throws -> Page<TraktMovieDTO>

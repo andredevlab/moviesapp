@@ -1,3 +1,4 @@
+import Core
 import Foundation
 
 struct TraktMovieDTO: Decodable, Sendable {
