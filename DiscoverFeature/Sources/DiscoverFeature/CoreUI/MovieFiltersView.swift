@@ -50,5 +50,12 @@ struct MovieFiltersView: View {
                 }
             }
         }
+        .tint(DiscoverStyle.accent)
     }
 }
+
+#if DEBUG
+#Preview("Sheet de filtros") {
+    MovieFiltersView(filters: MovieFilters(year: 2024, genre: .scienceFiction)) { _ in }
+}
+#endif

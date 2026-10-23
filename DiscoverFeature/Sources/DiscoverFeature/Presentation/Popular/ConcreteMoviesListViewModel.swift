@@ -156,7 +156,7 @@ final class ConcreteMoviesListViewModel: MoviesListViewModel {
         let task = Task {
             do {
                 if phase == .debouncing {
-                    try await Task.sleep(for: .milliseconds(300))
+                    try await Task.sleep(for: .seconds(2))
                     try Task.checkCancellation()
                     guard generation == requestGeneration else { return }
                     state.phase = requestPhase
