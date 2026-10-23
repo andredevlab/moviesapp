@@ -1,5 +1,5 @@
 import Foundation
-import Networking
+@testable import Networking
 
 actor MockHTTPTransport: HTTPTransport {
     struct Invocation: Equatable, Sendable {

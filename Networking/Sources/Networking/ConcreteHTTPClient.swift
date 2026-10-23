@@ -1,13 +1,13 @@
 import Foundation
 
-public actor ConcreteHTTPClient: HTTPClient {
+actor ConcreteHTTPClient: HTTPClient {
     private let transport: any HTTPTransport
-
-    public init(transport: any HTTPTransport) {
+    
+    init(transport: any HTTPTransport) {
         self.transport = transport
     }
-
-    public func send(_ request: any HTTPRequest) async throws -> HTTPResponse {
+    
+    func send(_ request: any HTTPRequest) async throws -> HTTPResponse {
         let requestURL = request.url
         let queryItems = request.queryItems
         let url = queryItems.isEmpty ? requestURL : requestURL.appending(queryItems: queryItems)
@@ -16,7 +16,7 @@ public actor ConcreteHTTPClient: HTTPClient {
         urlRequest.httpMethod = request.method
         request.headers.forEach { urlRequest.setValue($0.value, forHTTPHeaderField: $0.key) }
         urlRequest.httpBody = request.body
-
+        
         let body: Data
         let response: HTTPURLResponse
         do {
@@ -27,7 +27,7 @@ public actor ConcreteHTTPClient: HTTPClient {
             }
             throw (error as? HTTPError) ?? .transport(underlying: error)
         }
-
+        
         let result = HTTPResponse(body: body, response: response)
         let isSuccess = (200..<300).contains(result.statusCode)
         

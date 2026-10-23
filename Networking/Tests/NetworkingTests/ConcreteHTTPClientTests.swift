@@ -1,6 +1,7 @@
 import Foundation
-import Networking
 import Testing
+
+@testable import Networking
 
 struct ConcreteHTTPClientTests {
     @Test

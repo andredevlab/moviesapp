@@ -9,10 +9,14 @@ let package = Package(
         .macOS(.v13)
     ],
     products: [
-        .library(name: "Networking", targets: ["Networking"])
+        .library(name: "Networking", targets: ["Networking"]),
+    ],
+    dependencies: [
+        .package(url: "https://github.com/hmlongco/Factory.git", from: "3.5.0")
     ],
     targets: [
-        .target(name: "Networking"),
+        .target(name: "Networking",
+                dependencies: [.product(name: "FactoryKit", package: "Factory")]),
         .testTarget(name: "NetworkingTests", dependencies: ["Networking"])
     ],
     swiftLanguageModes: [.v6]
