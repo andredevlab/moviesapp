@@ -5,6 +5,7 @@ actor MockMoviesRemoteDataSource: MoviesRemoteDataSource {
     enum Invocation: Equatable, Sendable {
         case listPopular(filters: MovieFilters, page: PageRequest)
         case search(term: String, limit: Int)
+        case details(id: Movie.ID)
     }
 
     enum Failure: Error {
@@ -15,6 +16,12 @@ actor MockMoviesRemoteDataSource: MoviesRemoteDataSource {
     private var expectedInvocation: Invocation?
     private var listPopularResult: Result<Page<TraktMovieDTO>, any Error>?
     private var searchResult: Result<[TraktMovieDTO], any Error>?
+    private var detailsResult: Result<TraktMovieDetailDTO, any Error>?
+
+    func define(result: TraktMovieDetailDTO, for invocation: Invocation) {
+        expectedInvocation = invocation
+        detailsResult = .success(result)
+    }
 
     func define(result: Page<TraktMovieDTO>, for invocation: Invocation) {
         expectedInvocation = invocation
@@ -37,6 +44,8 @@ actor MockMoviesRemoteDataSource: MoviesRemoteDataSource {
         case .search:
             listPopularResult = nil
             searchResult = .failure(error)
+        case .details:
+            detailsResult = .failure(error)
         }
     }
 
@@ -56,5 +65,14 @@ actor MockMoviesRemoteDataSource: MoviesRemoteDataSource {
             throw Failure.unexpectedInvocation(invocation)
         }
         return try searchResult.get()
+    }
+
+    func details(id: Movie.ID) async throws -> TraktMovieDetailDTO {
+        let invocation = Invocation.details(id: id)
+        invocations.append(invocation)
+        guard invocation == expectedInvocation, let detailsResult else {
+            throw Failure.unexpectedInvocation(invocation)
+        }
+        return try detailsResult.get()
     }
 }

@@ -7,22 +7,23 @@ struct MoviesContentView<ViewModel: MoviesListViewModel>: View {
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @Bindable var model: ViewModel
     @State private var showingFilters = false
+    
     let onOpenDiagnostics: @MainActor () -> Void
-
+    
     private var featuredMovie: Movie? {
         model.isSearching ? nil : model.state.movies.first
     }
-
+    
     private var gridMovies: [Movie] {
         featuredMovie == nil ? model.state.movies : Array(model.state.movies.dropFirst())
     }
-
+    
     private var columns: [GridItem] {
         dynamicTypeSize.isAccessibilitySize
-            ? [GridItem(.flexible(), alignment: .top)]
-            : [GridItem(.adaptive(minimum: 150, maximum: 230), spacing: 16, alignment: .top)]
+        ? [GridItem(.flexible(), alignment: .top)]
+        : [GridItem(.adaptive(minimum: 150, maximum: 230), spacing: 16, alignment: .top)]
     }
-
+    
     private var loadingTitle: String? {
         switch model.state.phase {
         case .debouncing: "Buscando…"
@@ -31,59 +32,72 @@ struct MoviesContentView<ViewModel: MoviesListViewModel>: View {
         case .idle, .refreshing: nil
         }
     }
-
+    
     var body: some View {
         NavigationStack {
             ScrollView {
                 LazyVStack(spacing: DiscoverStyle.spacing) {
-                    DiscoverHeaderView(
-                        title: model.isSearching ? "Resultados" : "Popular Movies",
-                        subtitle: model.isSearching
-                            ? "Encontre sua próxima história."
-                            : "O que está em alta no Trakt."
-                    )
-
+                    DiscoverHeaderView(title: model.isSearching ? "Resultados" : "Popular Movies",
+                                       subtitle: model.isSearching
+                                       ? "Encontre sua próxima história."
+                                       : "O que está em alta no Trakt.")
+                    
                     if model.isSearching {
                         SearchNoticeCard()
                     }
-
+                    
                     if let movie = featuredMovie {
-                        MovieFeaturedCard(movie: movie)
-                            .task { await model.paginate(currentMovieID: movie.id) }
+                        NavigationLink {
+                            MovieDetailsView(movieID: movie.id)
+                        } label: {
+                            MovieFeaturedCard(movie: movie)
+                        }
+                        .buttonStyle(.plain)
+                        .accessibilityHint("Abre os detalhes do filme")
+                        .task { await model.paginate(currentMovieID: movie.id) }
                     }
-
+                    
                     LazyVGrid(columns: columns, alignment: .leading, spacing: 16) {
                         ForEach(gridMovies) { movie in
-                            MoviePosterCard(movie: movie)
-                                .task { await model.paginate(currentMovieID: movie.id) }
+                            NavigationLink {
+                                MovieDetailsView(movieID: movie.id)
+                            } label: {
+                                MoviePosterCard(movie: movie)
+                            }
+                            .buttonStyle(.plain)
+                            .accessibilityHint("Abre os detalhes do filme")
+                            .task { await model.paginate(currentMovieID: movie.id) }
                         }
                     }
-
+                    
                     if let loadingTitle {
                         LoadingCard(title: loadingTitle)
                     }
-
+                    
                     if let error = model.state.errorMessage {
                         ErrorCard(message: error) {
                             Task { await model.retry() }
                         }
-                    } else if model.state.hasLoaded && model.state.movies.isEmpty && model.state.phase == .idle {
+                    } else if model.state.hasLoaded
+                                && model.state.movies.isEmpty
+                                && model.state.phase == .idle {
                         EmptyResultsCard(searchText: model.searchText.trimmingCharacters(in: .whitespacesAndNewlines))
                     }
-
-                    if model.state.hasLoaded && !model.state.movies.isEmpty && model.state.phase == .idle && model.state.errorMessage == nil {
-                        MoviesPaginationFooter(
-                            hasMore: model.state.hasMore,
-                            endMessage: model.isSearching
-                                ? "Resultados desta busca carregados. Refine o termo para encontrar outros filmes."
-                                : "Todos os resultados foram carregados."
-                        ) {
+                    
+                    if model.state.hasLoaded
+                        && !model.state.movies.isEmpty
+                        && model.state.phase == .idle
+                        && model.state.errorMessage == nil {
+                        MoviesPaginationFooter(hasMore: model.state.hasMore,
+                                               endMessage: model.isSearching
+                                               ? "Resultados desta busca carregados. Refine o termo para encontrar outros filmes."
+                                               : "Todos os resultados foram carregados.") {
                             if let id = model.state.movies.last?.id {
                                 Task { await model.paginate(currentMovieID: id) }
                             }
                         }
                     }
-
+                    
                     TraktAttributionView()
                 }
                 .padding(DiscoverStyle.spacing)
@@ -101,6 +115,7 @@ struct MoviesContentView<ViewModel: MoviesListViewModel>: View {
                 .frame(maxWidth: .infinity)
             }
             .navigationTitle("Descobrir")
+            .searchable(text: $model.searchText, prompt: "Buscar filmes")
             .refreshable { await model.refresh() }
             .task(id: MovieQuery(term: model.searchText, filters: model.filters)) {
                 if model.isSearching {
@@ -118,7 +133,6 @@ struct MoviesContentView<ViewModel: MoviesListViewModel>: View {
             }
         }
         .tint(DiscoverStyle.accent)
-        .searchable(text: $model.searchText, prompt: "Buscar filmes")
         .sheet(isPresented: $showingFilters) {
             MovieFiltersView(filters: model.filters) { model.filters = $0 }
                 .presentationDetents([.large])

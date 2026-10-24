@@ -39,6 +39,12 @@ actor ConcreteMoviesRemoteDataSource: MoviesRemoteDataSource {
                                 from: response.body).map(\.movie)
         return movies
     }
+    
+    func details(id: Movie.ID) async throws -> TraktMovieDetailDTO {
+        let request = try TraktMovieDetailsRequest(id: id, clientID: clientID)
+        let response = try await client.send(request)
+        return try decode(TraktMovieDetailDTO.self, from: response.body)
+    }
 }
 
 extension ConcreteMoviesRemoteDataSource {

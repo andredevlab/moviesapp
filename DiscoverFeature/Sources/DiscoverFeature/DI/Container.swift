@@ -2,6 +2,12 @@ import FactoryKit
 import Core
 
 public extension Container {
+    var getMovieDetailsUseCase: Factory<any GetMovieDetailsUseCase> {
+        self {
+            ConcreteGetMovieDetailsUseCase(repository: Container.shared.moviesRepository.callAsFunction())
+        }
+    }
+
     var listPopularMoviesUseCase: Factory<any ListPopularMoviesUseCase> {
         self {
             ConcreteListPopularMoviesUseCase(repository: Container.shared.moviesRepository.callAsFunction())

@@ -1,0 +1,23 @@
+{
+  "ids": { "trakt": 1111, "slug": "foo.movie", "imdb": "tt1111" },
+  "title": "foo.title",
+  "year": 2222,
+  "overview": "foo.overview",
+  "runtime": 3333,
+  "genres": ["foo.genre", "foo.other.genre"],
+  "images": { "poster": ["images.example.com/foo.poster.webp"] },
+  "original_title": "foo.original.title",
+  "tagline": "foo.tagline",
+  "released": "2024-03-01",
+  "country": "br",
+  "language": "pt",
+  "languages": ["pt", "en"],
+  "status": "released",
+  "rating": 8.5,
+  "votes": 4444,
+  "certification": "foo.certification",
+  "trailer": "https://example.com/foo.trailer",
+  "homepage": "https://example.com/foo.homepage",
+  "after_credits": true,
+  "during_credits": false
+}

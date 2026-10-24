@@ -2,6 +2,7 @@ import Core
 import Foundation
 
 public protocol MoviesRepository: Sendable {
+    func details(id: Movie.ID) async throws -> MovieDetails
     func listPopular(filters: MovieFilters, page: PageRequest) async throws -> Page<Movie>
 
     /// Searches the first window only, with a nonblank term and positive limit.

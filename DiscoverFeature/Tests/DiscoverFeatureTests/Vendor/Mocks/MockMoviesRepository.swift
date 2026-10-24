@@ -5,6 +5,7 @@ actor MockMoviesRepository: MoviesRepository {
     enum Invocation: Equatable, Sendable {
         case listPopular(filters: MovieFilters, page: PageRequest)
         case search(term: String, limit: Int)
+        case details(id: Movie.ID)
     }
 
     enum Failure: Error {
@@ -15,6 +16,12 @@ actor MockMoviesRepository: MoviesRepository {
     private var expectedInvocation: Invocation?
     private var listPopularResult: Result<Page<Movie>, any Error>?
     private var searchResult: Result<MovieSearchResults, any Error>?
+    private var detailsResult: Result<MovieDetails, any Error>?
+
+    func define(result: MovieDetails, for invocation: Invocation) {
+        expectedInvocation = invocation
+        detailsResult = .success(result)
+    }
 
     func define(result: Page<Movie>, for invocation: Invocation) {
         expectedInvocation = invocation
@@ -37,6 +44,8 @@ actor MockMoviesRepository: MoviesRepository {
         case .search:
             listPopularResult = nil
             searchResult = .failure(error)
+        case .details:
+            detailsResult = .failure(error)
         }
     }
 
@@ -56,5 +65,14 @@ actor MockMoviesRepository: MoviesRepository {
             throw Failure.unexpectedInvocation(invocation)
         }
         return try searchResult.get()
+    }
+
+    func details(id: Movie.ID) async throws -> MovieDetails {
+        let invocation = Invocation.details(id: id)
+        invocations.append(invocation)
+        guard invocation == expectedInvocation, let detailsResult else {
+            throw Failure.unexpectedInvocation(invocation)
+        }
+        return try detailsResult.get()
     }
 }
