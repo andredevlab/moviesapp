@@ -4,6 +4,8 @@ O **movieslist** é um projeto iOS cujo objetivo principal é demonstrar uma bas
 
 O projeto começou como uma POC de validação de APIs e evoluiu para uma arquitetura modular organizada por feature. A estrutura atual separa modelos compartilhados, infraestrutura HTTP e a funcionalidade de descoberta, que reúne suas próprias camadas de apresentação, domínio e dados.
 
+<img src="docs/images/movieslist-demo.gif" alt="Demonstração do movieslist" width="260" height="506">
+
 ## Requisitos
 
 | Requisito | Configuração |
@@ -221,6 +223,10 @@ Esses testes usam mocks e fixtures locais; não precisam abrir o app ou consulta
 Em 2026-10-24, a execução pelo scheme `moviesapp` com o plano `moviesappTests` passou no iPhone 17 Simulator com iOS 27.0: **78 testes aprovados**, sendo 69 de DiscoverFeature e 9 de Networking. O App também compilou nessa execução. O resultado foi obtido por `xcodebuild test`, usando a mesma configuração de testes de Cmd-U; não houve verificação manual do atalho ou da interface.
 
 Build do App, testes e validação manual são verificações diferentes. QA visual e integração real com o Trakt continuam pendentes no registro; os testes com mocks não comprovam esses fluxos.
+
+## CI/CD
+
+O projeto inclui um fluxo simples de integração contínua com [GitHub Actions](.github/workflows/tests.yml). A cada novo push na branch `main`, são executados os testes do scheme `moviesapp` com o plano `moviesappTests`, que reúne as suítes de `DiscoverFeature` e `Networking`.
 
 ## Problemas comuns ao executar
 
