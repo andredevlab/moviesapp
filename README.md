@@ -4,7 +4,7 @@ O **movieslist** é um projeto iOS cujo objetivo principal é demonstrar uma bas
 
 O projeto começou como uma POC de validação de APIs e evoluiu para uma arquitetura modular organizada por feature. A estrutura atual separa modelos compartilhados, infraestrutura HTTP e a funcionalidade de descoberta, que reúne suas próprias camadas de apresentação, domínio e dados.
 
-<img src="docs/images/movieslist-demo.gif" alt="Demonstração do movieslist" width="260" height="506">
+<img src="docs/images/movieslist-demo.gif" alt="Demonstração do movieslist" width="220" height="506">
 
 ## Requisitos
 
