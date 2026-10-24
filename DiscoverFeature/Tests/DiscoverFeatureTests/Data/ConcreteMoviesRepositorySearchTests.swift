@@ -11,7 +11,8 @@ struct ConcreteMoviesRepositorySearchTests {
                                                      year: 2222,
                                                      overview: "foo.overview",
                                                      runtime: 3333,
-                                                     genres: ["foo.genre", "foo.other.genre"])
+                                                     genres: ["foo.genre", "foo.other.genre"],
+                                                     images: .init(poster: ["https://images.example.com/foo.search-poster.webp"]))
         
         await remoteDataSource.define(result: [trackMovieDTO],
                                       for: .search(term: "  foo.term  ", limit: 4444))
@@ -38,6 +39,7 @@ struct ConcreteMoviesRepositorySearchTests {
         #expect(result.movies.first?.overview == "foo.overview")
         #expect(result.movies.first?.runtime == 3333)
         #expect(result.movies.first?.genres == ["foo.genre", "foo.other.genre"])
+        #expect(result.movies.first?.posterURL?.absoluteString == "https://images.example.com/foo.search-poster.webp")
     }
     
     @Test
@@ -60,6 +62,7 @@ struct ConcreteMoviesRepositorySearchTests {
         #expect(result.movies.first?.overview == nil)
         #expect(result.movies.first?.runtime == nil)
         #expect(result.movies.first?.genres == [])
+        #expect(result.movies.first?.posterURL == nil)
     }
     
     @Test

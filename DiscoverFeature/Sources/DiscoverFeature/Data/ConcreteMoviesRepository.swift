@@ -1,4 +1,5 @@
 import Core
+import Foundation
 
 public actor ConcreteMoviesRepository: MoviesRepository {
     private let remoteDataSource: any MoviesRemoteDataSource
@@ -23,6 +24,9 @@ public actor ConcreteMoviesRepository: MoviesRepository {
               year: movie.year,
               overview: movie.overview,
               runtime: movie.runtime,
-              genres: movie.genres ?? [])
+              genres: movie.genres ?? [],
+              posterURL: movie.images?.poster?.first.flatMap { path in
+                  URL(string: path.hasPrefix("https://") ? path : "https://\(path)")
+              })
     }
 }

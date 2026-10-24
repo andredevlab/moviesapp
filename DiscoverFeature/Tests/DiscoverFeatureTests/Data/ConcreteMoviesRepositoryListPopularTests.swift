@@ -11,7 +11,8 @@ struct ConcreteMoviesRepositoryListPopularTests {
                                                      year: 2222,
                                                      overview: "foo.overview",
                                                      runtime: 3333,
-                                                     genres: ["foo.genre", "foo.other.genre"])
+                                                     genres: ["foo.genre", "foo.other.genre"],
+                                                     images: .init(poster: ["images.example.com/foo.poster.webp"]))
         let pagination = Helper.makePagination(page: 5555, limit: 6666, pageCount: 7777, itemCount: 8888)
         let filter = Helper.makeMovieFilters(year: 4444, genre: .action)
         let pageRequest = try Helper.makePageRequest(page: 5555, limit: 6666)
@@ -43,10 +44,27 @@ struct ConcreteMoviesRepositoryListPopularTests {
         #expect(result.items.first?.overview == "foo.overview")
         #expect(result.items.first?.runtime == 3333)
         #expect(result.items.first?.genres == ["foo.genre", "foo.other.genre"])
+        #expect(result.items.first?.posterURL?.absoluteString == "https://images.example.com/foo.poster.webp")
         #expect(result.pagination.page == 5555)
         #expect(result.pagination.limit == 6666)
         #expect(result.pagination.pageCount == 7777)
         #expect(result.pagination.itemCount == 8888)
+    }
+
+    @Test
+    func listPopular_whenMovieHasNoImages_shouldReturnMovieWithoutPoster() async throws {
+        let remoteDataSource = MockMoviesRemoteDataSource()
+        let pageRequest = try Helper.makePageRequest(page: 1111, limit: 2222)
+        await remoteDataSource.define(
+            result: Helper.makePage(items: [Helper.makeTraktMovieDTO(traktID: 3333)]),
+            for: .listPopular(filters: Helper.makeMovieFilters(), page: pageRequest)
+        )
+        let sut = ConcreteMoviesRepository(remoteDataSource: remoteDataSource)
+
+        let result = try await sut.listPopular(filters: Helper.makeMovieFilters(), page: pageRequest)
+
+        #expect(result.items.count == 1)
+        #expect(result.items.first?.posterURL == nil)
     }
     
     @Test

@@ -17,6 +17,10 @@ public extension Container {
 
 
 extension Container {
+    var posterImageLoader: Factory<PosterImageLoader> {
+        self { PosterImageLoader() }.cached
+    }
+
     var moviesRemoteDataSource: Factory<any MoviesRemoteDataSource> {
         self {
             ConcreteMoviesRemoteDataSource(client: Container.shared.moviesHTTPClient.callAsFunction())

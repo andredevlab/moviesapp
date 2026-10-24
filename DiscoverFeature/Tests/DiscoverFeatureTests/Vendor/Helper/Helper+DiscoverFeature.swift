@@ -7,13 +7,15 @@ extension Helper {
                                   year: Int? = nil,
                                   overview: String? = nil,
                                   runtime: Int? = nil,
-                                  genres: [String]? = nil) -> TraktMovieDTO {
+                                  genres: [String]? = nil,
+                                  images: TraktMovieDTO.Images? = nil) -> TraktMovieDTO {
         TraktMovieDTO(ids: .init(trakt: traktID),
                       title: title,
                       year: year,
                       overview: overview,
                       runtime: runtime,
-                      genres: genres)
+                      genres: genres,
+                      images: images)
     }
     
 }
