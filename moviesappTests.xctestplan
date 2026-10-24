@@ -1,0 +1,27 @@
+{
+  "configurations": [
+    {
+      "id": "776BC267-E0D3-4579-B233-2FE2832A4D74",
+      "name": "Default",
+      "options": {}
+    }
+  ],
+  "defaultOptions": {},
+  "testTargets": [
+    {
+      "target": {
+        "containerPath": "container:DiscoverFeature",
+        "identifier": "DiscoverFeatureTests",
+        "name": "DiscoverFeatureTests"
+      }
+    },
+    {
+      "target": {
+        "containerPath": "container:Networking",
+        "identifier": "NetworkingTests",
+        "name": "NetworkingTests"
+      }
+    }
+  ],
+  "version": 1
+}
