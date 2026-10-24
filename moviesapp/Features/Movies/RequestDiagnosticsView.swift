@@ -18,7 +18,11 @@ struct RequestDiagnosticsView: View {
         NavigationStack {
             List {
                 if entries.isEmpty {
-                    ContentUnavailableView("Nenhuma requisição", systemImage: "network")
+                    ContentUnavailableView(
+                        "Funcionalidade prevista como evolução",
+                        systemImage: "network",
+                        description: Text("Telemetria ainda não implementada.")
+                    )
                 }
                 ForEach(entries) { entry in
                     Section {
